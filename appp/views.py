@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-# Create your views here.
+from django.http import (
+    HttpResponse, HttpResponseNotFound, Http404,
+    HttpResponseRedirect, HttpResponsePermanentRedirect)
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.template.loader import render_to_string
+from django.template.defaultfilters import slugify
