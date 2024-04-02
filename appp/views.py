@@ -8,6 +8,6 @@ from django.urls import reverse
 from django.template.loader import render_to_string
 from django.template.defaultfilters import slugify
 
-def test(r):
-    return HttpResponse('Test')
+def test(request):
+    return render(request, 'appp/index.html')
 
