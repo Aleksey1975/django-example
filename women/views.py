@@ -26,7 +26,11 @@ def page_not_found(request, exception):
 
 
 def index(request):
-    return render(request, 'women/index.html')
+    context = {
+        'posts': data_db,
+
+    }
+    return render(request, 'women/index.html', context)
 
 
 def categories(request, cat_id):
@@ -88,5 +92,3 @@ def login(request):
     return HttpResponse("Авторизация")
 
 
-def page_not_found(request, exception):
-    return HttpResponseNotFound("<h1>Страница не найдена</h1>")
