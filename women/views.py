@@ -19,18 +19,22 @@ data_db = [
 ]
 
 
-
+cats_db = [
+    {'slug': 'actrisy', 'name':'Актрисы'},
+    {'slug': 'pevicy', 'name': 'Певицы'},
+    {'slug': 'sportsmenky', 'name': 'Спортменки'},
+]
 
 def page_not_found(request, exception):
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
 
 
-def index(request):
-    context = {
-        'posts': data_db,
-
-    }
-    return render(request, 'women/index.html', context)
+# def index(request):
+#     context = {
+#         'posts': data_db,
+#
+#     }
+#     return render(request, 'women/index.html', context)
 
 
 def categories(request, cat_id):
@@ -38,7 +42,15 @@ def categories(request, cat_id):
 
 
 def categories_by_slug(request, cat_slug):
-    return HttpResponse(f'Категория по слагу:  {cat_slug}')
+    context = {
+        'cat_slug': cat_slug,
+        'title': cat_slug,
+        'menu': menu,
+        'posts': data_db,
+        'cat_selected': cat_slug,
+
+    }
+    return render(request, 'women/cats.html', context)
 
 
 def archives(request, year):
@@ -68,12 +80,18 @@ def index(request):
         'title': 'Главная страница',
         'menu': menu,
         'posts': data_db,
+        'cat_selected': None,
+
     }
     return render(request, 'women/index.html', context=data)
 
 
 def about(request):
-    return render(request, 'women/about.html', {'title': 'О сайте', 'menu': menu})
+    context = {'title': 'О сайте',
+               'menu': menu,
+               'cat_selected': 1,
+               }
+    return render(request, 'women/about.html', context)
 
 
 def show_post(request, post_id):

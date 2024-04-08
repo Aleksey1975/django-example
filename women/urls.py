@@ -9,7 +9,7 @@ urlpatterns = [
     # path('', index, name='home'),
     path('<year5:year>/', converter),
     re_path(r'^archive/(?P<year>[0-9]{4})/', archives),
-    path('cats/<int:cat_id>/', categories),
+    path('cats/<int:cat_id>/', categories, name='cats'),
     path('cats/<slug:cat_slug>/', categories_by_slug, name='cat_slug'),
 
     path('', index, name='home'),  # http://127.0.0.1:8000
