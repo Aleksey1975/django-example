@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'fpages',
 
+    'django_extensions',
+
     'appp',
     'women.apps.WomenConfig',
 

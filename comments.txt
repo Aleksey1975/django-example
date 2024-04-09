@@ -1,3 +1,48 @@
+
+
+python manage.py shell
+from women.models import Women
+Women(title='r', content='rr')
+w1 = _
+w1.save()
+w1.title
+w1.content
+w1.pk
+from django.db import connection
+connection.queries
+
+pip install ipython
+pip install django-extensions
+
+
+python manage.py shell_plus --print-sql
+
+Women.objects.create()
+Women.objects.all()
+Women.objects.filter(title='ee')
+Women.objects.filter(pk__gte=5)    # fields lookups
+Women.objects.filter(pk__gt=5)
+Women.objects.filter(pk__lte=5)
+Women.objects.filter(pk__lt=5)
+Women.objects.filter(pk__contains='ee')
+Women.objects.filter(pk__icontains='ee')
+Women.objects.filter(pk__in=[1, 4, 6])
+Women.objects.filter(pk__in=[1, 4, 6], is_published=True)
+Women.objects.exclude(pk=5)
+Women.objects.get(pk=5)
+
+
+
+
+
+
+
+
+
+
+
+
+
 python manage.py runserver --insecure
 
 чтобы загрузить сервер с загруженной статикой в режиме False

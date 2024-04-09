@@ -25,6 +25,16 @@ cats_db = [
     {'slug': 'sportsmenky', 'name': 'Спортменки'},
 ]
 
+
+def about(request):
+    context = {'title': 'О сайте',
+               'menu': menu,
+               'menu_selected': 'О сайте',
+               }
+    return render(request, 'women/about.html', context)
+
+
+
 def page_not_found(request, exception):
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
 
@@ -86,12 +96,6 @@ def index(request):
     return render(request, 'women/index.html', context=data)
 
 
-def about(request):
-    context = {'title': 'О сайте',
-               'menu': menu,
-               'cat_selected': 1,
-               }
-    return render(request, 'women/about.html', context)
 
 
 def show_post(request, post_id):

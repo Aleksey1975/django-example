@@ -11,3 +11,8 @@ def get_categories():
 def show_categories(cat_selected=None):
     cats = views.cats_db
     return {'cats': cats, 'cat_selected': cat_selected}
+
+@register.inclusion_tag('women/menu_categories.html')
+def show_menu(menu_selected=None):
+    menu = views.menu
+    return {'menu': menu, 'menu_selected': menu_selected}
