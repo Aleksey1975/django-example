@@ -31,6 +31,13 @@ Women.objects.filter(pk__in=[1, 4, 6], is_published=True)
 Women.objects.exclude(pk=5)
 Women.objects.get(pk=5)
 
+24.04.11.01
+
+ Women.objects.order_by('title')
+
+
+
+
 
 
 
