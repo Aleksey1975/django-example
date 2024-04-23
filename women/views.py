@@ -1,29 +1,16 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.urls import reverse
 from django.template.defaultfilters import slugify
+from .models import *
+from .forms import *
 
 
 menu = [{'title': "О сайте", 'url_name': 'about'},
         {'title': "Добавить статью", 'url_name': 'add_page'},
         {'title': "Обратная связь", 'url_name': 'contact'},
         {'title': "Войти", 'url_name': 'login'}
-]
-
-data_db = [
-    {'id': 1, 'title': 'Анджелина Джоли', 'content': '''<h1>Анджелина Джоли</h1> (англ. Angelina Jolie[7], при рождении Войт (англ. Voight), ранее Джоли Питт (англ. Jolie Pitt); род. 4 июня 1975, Лос-Анджелес, Калифорния, США) — американская актриса кино, телевидения и озвучивания, кинорежиссёр, сценаристка, продюсер, фотомодель, посол доброй воли ООН.
-    Обладательница премии «Оскар», трёх премий «Золотой глобус» (первая актриса в истории, три года подряд выигравшая премию) и двух «Премий Гильдии киноактёров США».''',
-     'is_published': True},
-    {'id': 2, 'title': 'Марго Робби', 'content': 'Биография Марго Робби', 'is_published': False},
-    {'id': 3, 'title': 'Джулия Робертс', 'content': 'Биография Джулия Робертс', 'is_published': True},
-]
-
-
-cats_db = [
-    {'slug': 'actrisy', 'name':'Актрисы'},
-    {'slug': 'pevicy', 'name': 'Певицы'},
-    {'slug': 'sportsmenky', 'name': 'Спортменки'},
-]
+        ]
 
 
 def about(request):
@@ -34,33 +21,87 @@ def about(request):
     return render(request, 'women/about.html', context)
 
 
-
 def page_not_found(request, exception):
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
-
-
-# def index(request):
-#     context = {
-#         'posts': data_db,
-#
-#     }
-#     return render(request, 'women/index.html', context)
 
 
 def categories(request, cat_id):
     return render(request, 'women/cats.html')
 
 
-def categories_by_slug(request, cat_slug):
+# def categories_by_slug(request, cat_slug):
+#     cats = Category.objects.filter(women2__is_published=True).distinct()
+#     category = get_object_or_404(Category, slug=cat_slug)
+#     posts = Women2.objects.filter(is_published=True, cat=category)
+#
+#     data = {
+#         'menu': menu,
+#         'posts': posts,
+#         'cats': cats,
+#         'cat_slug': cat_slug,
+#         'title': cat_slug,
+#         'cat_selected': cat_slug,
+#         'category': category,
+#
+#     }
+#
+#     return render(request, 'women/index.html', data)
+
+
+def show_category(request, post_slug):
+    category = get_object_or_404(Category, slug=post_slug)
+    tags = Tag.objects.filter(tags__is_published=True).distinct()
+    women = Women2.objects.filter(cat__slug=post_slug, is_published=True).select_related('cat')
+    categories = Category.objects.filter(posts__is_published=True).distinct()
+    if not women:
+        raise Http404()
+
     context = {
-        'cat_slug': cat_slug,
-        'title': cat_slug,
-        'menu': menu,
-        'posts': data_db,
-        'cat_selected': cat_slug,
+        'cat_selected': post_slug,
+        'title': category.name,
+        'women': women,
+        'categories': categories,
+        'tags': tags,
+    }
+    return render(request, 'women/index.html', context=context)
+
+
+def show_post(request, post_slug):
+    tags = Tag.objects.filter(tags__is_published=True).distinct()
+    categories = Category.objects.filter(posts__is_published=True).distinct()
+    post = get_object_or_404(Women2, slug=post_slug)
+    post_tags = post.tag.all()
+
+    context = {
+        'post': post,
+        'title': post.title,
+        'categories': categories,
+        'tags': tags,
+        'post_tags': post_tags,
+    }
+    return render(request, 'women/post.html', context)
+
+
+def show_tag(request, tag_slug):
+    categories = Category.objects.filter(posts__is_published=True).distinct()
+    tag = get_object_or_404(Tag, slug=tag_slug)
+    women = Women2.objects.filter(tag__slug=tag_slug, is_published=True)
+    tags = Tag.objects.filter(tags__is_published=True).distinct()
+
+    if not women:
+        raise Http404()
+
+    context = {
+        'categories': categories,
+        'title': tag.name,
+        'women': women,
+        'tags': tags,
+        'tag_selected': tag_slug,
 
     }
-    return render(request, 'women/cats.html', context)
+    return render(request, 'women/index.html', context=context)
+
+
 
 
 def archives(request, year):
@@ -82,28 +123,68 @@ def converter(request, year):
     return HttpResponse(f'Converter {year}')
 
 
-
-
-
 def index(request):
-    data = {
-        'title': 'Главная страница',
-        'menu': menu,
-        'posts': data_db,
-        'cat_selected': None,
+    categories = Category.objects.filter(posts__is_published=True).distinct()
+    women = Women2.objects.filter(is_published=True).select_related('cat')
+    tags = Tag.objects.filter(tags__is_published=True).distinct()
+
+    context = {
+        'cat_selected': 0,
+        'title': 'женщины',
+        'women': women,
+        'categories': categories,
+        'selected': 1,
+        'tags': tags,
 
     }
-    return render(request, 'women/index.html', context=data)
+    return render(request, 'women/index.html', context=context)
 
+#
+# def show_post(request, post_slug):
+#     cats = Category.objects.all()
+#     post = get_object_or_404(Women2, slug=post_slug)
+#
+#     data = {
+#         'menu': menu,
+#         'post': post,
+#         'title': post.title,
+#         'cats': cats,
+#
+#     }
 
-
-
-def show_post(request, post_id):
-    return HttpResponse(f"Отображение статьи с id = {post_id}")
+#    return render(request, 'women/post.html', data)
 
 
 def addpage(request):
-    return HttpResponse("Добавление статьи")
+    if request.method == 'POST':
+        form = AddPost(request.POST)
+        if form.is_valid():
+            # print(form.cleaned_data)
+            try:
+                Women2.objects.create(**form.cleaned_data)
+                return redirect('home')
+            except:
+                form.add_error(None, 'Ошибка добавления поста!')
+    else:
+        form = AddPost()
+
+    categories = Category.objects.filter(posts__is_published=True).distinct()
+    women = Women2.objects.filter(is_published=True).select_related('cat')
+    tags = Tag.objects.filter(tags__is_published=True).distinct()
+
+    context = {
+        'form': form,
+        'cat_selected': 0,
+        'title': 'Добавление статьи',
+        'menu_selected': "Добавить статью",
+        'women': women,
+        'categories': categories,
+        'selected': 1,
+        'tags': tags,
+
+    }
+    return render(request, 'women/add_page.html', context=context)
+
 
 
 def contact(request):
@@ -112,5 +193,3 @@ def contact(request):
 
 def login(request):
     return HttpResponse("Авторизация")
-
-

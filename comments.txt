@@ -33,7 +33,18 @@ Women.objects.get(pk=5)
 
 24.04.11.01
 
- Women.objects.order_by('title')
+ Women.objects.filter(pk__gte=2).order_by('-title')
+
+
+24.04.13.01
+
+Women.objects.update(is_published = True)
+Women.objects.filter(pk__contains='ee').delete()
+
+
+select_related(key) - жадная загрузка связанных данных по внешнему ключу key, который имеет тип ForeignField
+
+prefetch_related(key) - жадная загрузка связанных данных по внешнему ключу key, который имеет тип ManyToManyField
 
 
 
@@ -43,6 +54,14 @@ Women.objects.get(pk=5)
 
 
 
+
+
+
+
+
+
+
+Lin the lawyer is home from college for the weekend!
 
 
 
